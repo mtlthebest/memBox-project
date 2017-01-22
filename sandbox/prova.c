@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-int
-main ()
+int main()
 {
-  printf ("%s", "Ciao Sarzana, belin!\n");
-  return 0;
+    printf("%s", "Ciao Sarzana, belin!\nAh ah! ;^)\n");
+    printf("%s", "Ciao Pippo!\nAh ah! ;^)\n");
+    return 0;
 }
