@@ -1,8 +1,2 @@
-# Ignore all
-*
-
-# Unignore all with extensions
-!*.*
-
-# Ignore files with ending tilde
+# Ignores files with ending tilde in the extension
 *.*~
