@@ -1,2 +1,5 @@
 # Ignores files with ending tilde in the extension
 *.*~
+
+# Ignores compiled files (convention: compiled binaries must have ".run" extension)
+*.run
