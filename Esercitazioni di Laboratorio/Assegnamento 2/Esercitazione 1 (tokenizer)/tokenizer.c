@@ -26,29 +26,11 @@ main ()
   char delimitatore[] = " ";
   char *token;
 
-  // 1
   token = strtok (testo, delimitatore);
-  printf ("%s\n", token);
-
-  // 2
-  token = strtok (NULL, delimitatore);
-  printf ("%s\n", token);
-
-  // 3
-  token = strtok (NULL, delimitatore);
-  printf ("%s\n", token);
-
-  // 4
-  token = strtok (NULL, delimitatore);
-  printf ("%s\n", token);
-
-  // 5 - causa Segmentation Fault
-  token = strtok (NULL, delimitatore);
-  if (token != NULL) printf ("%s\n", token);
-
-  // 6
-  token = strtok (NULL, delimitatore);
-  if (token != NULL) printf ("%s\n", token);
+  while (token != NULL) {
+    printf ("%s\n", token);
+    token = strtok (NULL, delimitatore);
+  }
 
   return 0;
 }
