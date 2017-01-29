@@ -25,12 +25,9 @@ main (int argc, char *argv[])
 {
   // nessuna stringa fornita
   if (argc <= 1)
-    {
-      printf ("Numero di argomenti insufficiente.\n");
       return 0;
-    }
 
-  // fornita piu' di una stringa
+  // fornita almeno una stringa
   else
     {
       int i;
