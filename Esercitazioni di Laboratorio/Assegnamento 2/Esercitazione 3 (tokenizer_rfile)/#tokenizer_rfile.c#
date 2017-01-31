@@ -106,7 +106,7 @@ main (int argc, char *argv[])
 	      // incremento del contatore degli elementi della lista
 	      parole++;
 	    }
-	  printf ("Numero di parole: %d\n", parole);
+	  printf ("Numero di righe: %d\n", parole);
 
 	  // operazioni finali
 	  // chiusura del file di input
@@ -121,6 +121,7 @@ main (int argc, char *argv[])
 	    }
 	  if (feedback != NULL)
 	    {
+ 
 	      free (base->stringa_1K);
 	      free (base);
 	    }

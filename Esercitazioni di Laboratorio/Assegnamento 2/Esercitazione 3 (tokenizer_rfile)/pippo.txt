@@ -1,3 +1,4 @@
+1234567890
 /* Scrivere una seconda versione del programma precedente che
  * implementa la funzione 'tokenizer_r' che ha la stessa
  * identica interfaccia, ma che utilizza al suo interno
