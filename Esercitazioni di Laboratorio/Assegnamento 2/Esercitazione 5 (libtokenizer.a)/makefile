@@ -23,8 +23,4 @@ tokenizer_r: libtokenizer.a tokenizer_r.o
 	gcc -g -Wall tokenizer_r.o -o tokenizer_r.run -L . -ltokenizer
 	rm -f *~
 	rm -f *.*~
-	rm -f *.o
-	rm -f *.o~
-	rm -f *.a
-	rm -f *.a~
 	rm -f \#*
