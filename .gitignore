@@ -1,5 +1,11 @@
-# Ignores files with ending tilde in the extension
+# Ignores files with ending tilde
 *.*~
+*~
+
+# Ignores files starting with pound symbol
+\#*
 
 # Ignores compiled files (convention: compiled binaries must have ".run" extension)
 *.run
+*.o
+*.a
