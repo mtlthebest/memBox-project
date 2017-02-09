@@ -20,10 +20,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include "matdump.h"
 
-
-#define SIZE_LIMIT 31
+#define SIZE_LIMIT 1024
 #define RAISE(error_text) {						\
     printf("%s%s%s", "(Debug) >>> Errore: ", error_text, ". Interruzione.\n"); \
     return -1;								\
@@ -35,22 +35,23 @@ main (int argc, char *argv[])
   // dichiarazione delle variabili sullo stack
   int size_value, i, j;
   int debug = 1;		// 1 per TRUE
+  int confronto = -999;		// risultato di memcmp
 
   // controllo preliminare degli argomenti passati
   if (args_OK (argc) == 0)
-    RAISE ("e' necessario passare uno e un solo argomento")
-      // prendo in ingresso un intero
-      if (input_int_OK (argv[1], &size_value) == 0)
-      RAISE
-	("e' necessario che l'argomento fornito sia un numero naturale valido")
-	// verifico che il numero sia abbastanza piccolo
-	if (size_value <= 0 || size_value > SIZE_LIMIT)
-	RAISE ("e' necessario che (0 < num <= 31)")
-	  // corpo principale del programma
-	  if (debug)
-	  printf
-	    ("Condizioni preliminari verificate, intero fornito: %d. Continuo...\n",
-	     size_value);
+    RAISE ("e' necessario passare uno e un solo argomento");
+  // prendo in ingresso un intero
+  if (input_int_OK (argv[1], &size_value) == 0)
+    RAISE
+      ("e' necessario che l'argomento fornito sia un numero naturale valido");
+  // verifico che il numero sia abbastanza piccolo
+  if (size_value <= 0 || size_value > SIZE_LIMIT)
+    RAISE ("e' necessario che (0 < num <= 1024)");
+  // corpo principale del programma
+  if (debug)
+    printf
+      ("Condizioni preliminari verificate, intero fornito: %d. Continuo...\n",
+       size_value);
 
   // alloco in memoria una matrice M1 di num×num elementi
   // float in modo che siano contigui in memoria.
@@ -68,13 +69,44 @@ main (int argc, char *argv[])
   // su un file il cui nome è 'mat_dump.dat'.
   FILE *M1_bin = fopen ("mat_dump.dat", "wb");
   dump (M1, M1_bin, size_value);
+  fclose (M1_bin);
 
-  // chiusura dei file aperti
+  // rileggo quindi la matrice dal file 'mat_dump.dat' memorizzandola
+  // in una matrice differente da quella di partenza (chiamata M2)
+  float *M2 = malloc (size_value * size_value * sizeof (float));
+  M1_bin = fopen ("mat_dump.dat", "rb");
+  load_from_bin (M2, M1_bin, size_value);
+  if (debug)
+    {
+      printf ("Contenuti di M2:\n");
+      show_square_matrix (M2, size_value);
+    }
+
+  // al termine dell'operazione di lettura effettuo il confronto delle
+  // due matrici con la funzione 'confronta'. Testare il programma
+  // passando alla funzione 'confronta' la funzione di libreria memcmp
+  // (man 3 memcmp). NOTA: memcmp confronta un numero di byte pari al
+  // valore fornito con il terzo argomento.
+  confronto =
+    confronta (memcmp, M1, M2, size_value * size_value * sizeof (float));
+  if (debug)
+    printf ("Risultato di memcmp: %d\n", confronto);
+
+  // extra debug
+  if (debug)
+    {
+      printf ("sizeof(float): %d\n", (int) sizeof (float));
+      printf ("sizeof(char): %d\n", (int) sizeof (char));
+      printf ("sizeof(unsigned char): %d\n", (int) sizeof (unsigned char));
+      printf ("sizeof(int): %d\n", (int) sizeof (int));
+    }
+
+  // chiusura dei file rimasti aperti
   fclose (M1_bin);
 
   // liberazione della memoria dinamica allocata sullo heap
   free (M1);
-
+  free (M2);
   // end main
   return 0;
 }
@@ -123,4 +155,20 @@ dump (float *matrice, FILE * file_binario, int dim)
   for (m = 0; m < dim; m++)
     for (n = 0; n < dim; n++)
       fwrite (matrice + (m * dim + n), sizeof (float), 1, file_binario);
+}
+
+void
+load_from_bin (float *matrice_dest, FILE * file_sorgente, int dim)
+{
+  int p, q;
+  for (p = 0; p < dim; p++)
+    for (q = 0; q < dim; q++)
+      fread (matrice_dest + (p * dim + q), sizeof (float), 1, file_sorgente);
+}
+
+int
+confronta (int (*fun) (const void *, const void *, size_t), float *matrice_A,
+	   float *matrice_B, int dim)
+{
+  return fun (matrice_A, matrice_B, dim);
 }

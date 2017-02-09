@@ -5,7 +5,8 @@
 # Ignores files starting with pound symbol
 \#*
 
-# Ignores compiled files (convention: executable binaries must have ".run" extension)
+# Ignores binary and compiled files (convention: executable binaries must have ".run" extension)
 *.run
 *.o
 *.a
+*.dat
