@@ -31,15 +31,15 @@ int
 main (int argc, char *argv[])
 {
   // dichiarazione delle variabili sullo stack
-  int size_value;
-  int *size_pointer = &size_value;
+  int size_value, i, j;
+  int debug = 1;		// 1 per TRUE
 
   // controllo preliminare degli argomenti passati
   if (args_OK (argc) == 0)
     RAISE ("e' necessario passare uno e un solo argomento");
 
   // prendo in ingresso un intero
-  if (input_int_OK (argv[1], size_pointer) == 0)
+  if (input_int_OK (argv[1], &size_value) == 0)
     {
     RAISE
 	("e' necessario che l'argomento fornito sia un numero naturale valido")}
@@ -50,13 +50,34 @@ main (int argc, char *argv[])
       RAISE ("e' necessario che (0 < num <= 1024)");
     }
 
-
   // corpo principale del programma
-  printf
-    ("Condizioni preliminari verificate, intero fornito: %d. Continuo...\n",
-     size_value);
+  if (debug)
+    printf
+      ("Condizioni preliminari verificate, intero fornito: %d. Continuo...\n",
+       size_value);
 
+  // alloco in memoria una matrice M1 di num×num elementi
+  // float in modo che siano contigui in memoria.
+  float *M1 = malloc (size_value * size_value * sizeof (float));
+
+  // inizializzare tale matrice (M1) in modo arbitrario
+  // (ad esempio M1(i,j) = (i+j)/2.0).
+  for (i = 0; i < size_value; i++)
+    for (j = 0; j < size_value; j++)
+      M1[size_value * i + j] = (i + j) / 2.0;
+  if (debug)
+    show_square_matrix (M1, size_value);
+
+  // faccio quindi il dump della matrice in formato binario
+  // su un file il cui nome è 'mat_dump.dat'.
+  FILE * M1_bin = fopen("mat_dump.dat", "bw");
+
+
+  // chiusura dei file aperti
+  fclose(M1_bin);
+  
   // liberazione della memoria dinamica allocata sullo heap
+  free (M1);
 
   // end main
   return 0;
@@ -85,4 +106,16 @@ input_int_OK (char *input_string, int *size)
     }				// end while
   *size = atoi (input_string);
   return result;
+}
+
+void
+show_square_matrix (float *firstElement, int dim)
+{
+  int x, y;
+  for (x = 0; x < dim; x++)
+    {
+      for (y = 0; y < dim; y++)
+	printf ("%2.1f ", firstElement[x * dim + y]);
+      printf ("\n");
+    }
 }
