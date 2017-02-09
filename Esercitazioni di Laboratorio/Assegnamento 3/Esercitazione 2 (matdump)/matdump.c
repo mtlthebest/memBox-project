@@ -22,6 +22,8 @@
 #include <ctype.h>
 #include "matdump.h"
 
+
+#define SIZE_LIMIT 31
 #define RAISE(error_text) {						\
     printf("%s%s%s", "(Debug) >>> Errore: ", error_text, ". Interruzione.\n"); \
     return -1;								\
@@ -36,25 +38,19 @@ main (int argc, char *argv[])
 
   // controllo preliminare degli argomenti passati
   if (args_OK (argc) == 0)
-    RAISE ("e' necessario passare uno e un solo argomento");
-
-  // prendo in ingresso un intero
-  if (input_int_OK (argv[1], &size_value) == 0)
-    {
-    RAISE
-	("e' necessario che l'argomento fornito sia un numero naturale valido")}
-
-  // verifico che il numero sia abbastanza piccolo
-  if (size_value <= 0 || size_value > 1024)
-    {
-      RAISE ("e' necessario che (0 < num <= 1024)");
-    }
-
-  // corpo principale del programma
-  if (debug)
-    printf
-      ("Condizioni preliminari verificate, intero fornito: %d. Continuo...\n",
-       size_value);
+    RAISE ("e' necessario passare uno e un solo argomento")
+      // prendo in ingresso un intero
+      if (input_int_OK (argv[1], &size_value) == 0)
+      RAISE
+	("e' necessario che l'argomento fornito sia un numero naturale valido")
+	// verifico che il numero sia abbastanza piccolo
+	if (size_value <= 0 || size_value > SIZE_LIMIT)
+	RAISE ("e' necessario che (0 < num <= 31)")
+	  // corpo principale del programma
+	  if (debug)
+	  printf
+	    ("Condizioni preliminari verificate, intero fornito: %d. Continuo...\n",
+	     size_value);
 
   // alloco in memoria una matrice M1 di num×num elementi
   // float in modo che siano contigui in memoria.
@@ -70,12 +66,12 @@ main (int argc, char *argv[])
 
   // faccio quindi il dump della matrice in formato binario
   // su un file il cui nome è 'mat_dump.dat'.
-  FILE * M1_bin = fopen("mat_dump.dat", "bw");
-
+  FILE *M1_bin = fopen ("mat_dump.dat", "wb");
+  dump (M1, M1_bin, size_value);
 
   // chiusura dei file aperti
-  fclose(M1_bin);
-  
+  fclose (M1_bin);
+
   // liberazione della memoria dinamica allocata sullo heap
   free (M1);
 
@@ -115,7 +111,16 @@ show_square_matrix (float *firstElement, int dim)
   for (x = 0; x < dim; x++)
     {
       for (y = 0; y < dim; y++)
-	printf ("%2.1f ", firstElement[x * dim + y]);
+	printf ("%4.1f ", firstElement[x * dim + y]);
       printf ("\n");
     }
+}
+
+void
+dump (float *matrice, FILE * file_binario, int dim)
+{
+  int m, n;
+  for (m = 0; m < dim; m++)
+    for (n = 0; n < dim; n++)
+      fwrite (matrice + (m * dim + n), sizeof (float), 1, file_binario);
 }
