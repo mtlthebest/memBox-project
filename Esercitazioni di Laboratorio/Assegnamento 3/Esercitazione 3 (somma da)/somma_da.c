@@ -1,10 +1,32 @@
+/* +-----------------------+
+ * | Esercizio 3: somma da |
+ * +-----------------------+
+ *
+ * Scrivere un programma C che implementa una funzione somma con la
+ * seguente segnatura:
+ *
+ * +----------------------------------------------------------------+
+ * | int somma(int x);                                              |
+ * +----------------------------------------------------------------+
+ *
+ * La funzione 'somma' aggiunge l'intero x (inserito dall'utente da
+ * stdin) al valore calcolato fino a quel momento e ritornando la
+ * somma algebrica. Il programma termina quando viene inserito
+ * dall'utente un numero negativo. Il valore iniziale della somma
+ * deve essere INIT_VALUE che viene definito a compilazione
+ * utilizzando il flag -D. Il programma non deve fare uso di
+ * variabili globali.
+ *
+ * Dare anche una implementazione rientrante della funziona 'somma'
+ * ('somma_r').
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "refactored_somma_da.h"
+#include "somma_da.h"
 
-#define DEBUG_MODE 1
 #define RAISE_ERROR(error_text) {			\
     printf("%s. Interruzione.\n", error_text);		\
     ret_val = -1;					\
@@ -40,6 +62,7 @@ main ()
 	  current_value = somma (converted_input);
 	  if (converted_input < 0)
 	    {
+	      printf ("Valore: %d\n", current_value);
 	      RAISE_ERROR ("Rilevato valore negativo");
 	    }
 	  else
@@ -110,18 +133,21 @@ validate (char *input_string)
   if (input_string[0] == '-')
     {
       temp = 1;			// numero negativo
-      printf ("Validate: numero negativo?\n");
+      if (DEBUG_MODE)
+	printf ("Validate: numero negativo?\n");
     }
   else
     {
       temp = 0;			// numero positivo
-      printf ("Validate: numero positivo?\n");
+      if (DEBUG_MODE)
+	printf ("Validate: numero positivo?\n");
     }
   int result = 1;
   while (input_string[temp] != '\0')
     {
-      printf ("Validate: analizzo il carattere '%c'...\n",
-	      input_string[temp]);
+      if (DEBUG_MODE)
+	printf ("Validate: analizzo il carattere '%c'...\n",
+		input_string[temp]);
       if (!isdigit (input_string[temp]))
 	{
 	  // questo carattere non e' una cifra
