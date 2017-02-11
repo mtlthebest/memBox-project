@@ -17,7 +17,7 @@
  * utilizzando il flag -D. Il programma non deve fare uso di
  * variabili globali.
  *
- * Dare anche una implementazione rientrante della funziona 'somma'
+ * Dare anche una implementazione rientrante della funzione 'somma'
  * ('somma_r').
  */
 
@@ -79,7 +79,6 @@ main ()
   // end main
   return ret_val;
 }
-
 
 int
 somma (int nuovo_addendo)
