@@ -23,110 +23,99 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
 #include "reentrant_somma_da.h"
 
-#define RAISE_ERROR(error_text) {			\
-    printf("%s. Interruzione.\n", error_text);		\
-    ret_val = -1;					\
-    break;						\
-  }
+#define LENGTH_LIMIT 16
 
 int
 main ()
 {
-  // operazioni preliminari
-  int current_value = INIT_VALUE;
-  int ret_val = 0;
-  int converted_input = 0;
-  if (DEBUG_MODE)
-    printf ("Valore: %d\n", current_value);
-  preparaFileIniziale (&current_value);
+  // allocazione sullo stack delle variabili necessarie
+  char input_string[LENGTH_LIMIT];
+  int return_value = 0;
+  int actual_value = INIT_VALUE;
+  int input_integer;
 
-  // blocco principale del programma
-  char *input = malloc (32 * sizeof (char));
-  while (converted_input >= 0)
+  // stampo a video le istruzioni
+  printf ("ISTRUZIONI:\n");
+  printf
+    ("1) Inserisci un numero intero maggiore o uguale a zero. Sara` sommato al valore precedente.\n");
+  printf
+    ("2) Inserisci un numero intero negativo per interrompere il programma.\n");
+  printf
+    ("3) La stringa fornita deve essere lunga al massimo %d caratteri.\n",
+     LENGTH_LIMIT);
+
+  // stampo a video il valore iniziale
+  printf ("Valore di partenza: %d\n", actual_value);
+
+  // ciclo principale del programma
+  while (1)			// ciclo interrotto solo da errori o su comando dell'utente (input negativo)
     {
+      // ricevo l'input dell'utente da stdin
       printf ("Inserisci un numero intero: ");
-      fgets (input, 32, stdin);
-      strtok (input, "\n");	// rimuove il ritorno a capo
-      if (validate (input) == 0)
+      fgets (input_string, LENGTH_LIMIT, stdin);
+
+      // rimuovo il carattere di ritorno a capo dalla stringa
+      strtok (input_string, "\n");
+
+      // visualizzo la stringa inserita dall'utente
+      if (DEBUG_MODE)
+	printf ("Hai inserito la stringa: %s\n", input_string);
+
+      // validazione dell'input: la stringa e` un numero intero valido?
+      int valid = validate_integer (input_string);
+      if (!valid)
 	{
-	  RAISE_ERROR ("Errore: input non valido");
+	  printf
+	    ("Errore: stringa inserita non valida, devi inserire un numero intero. Interruzione.\n");
+	  return_value = -1;
+	  break;
 	}
       else
 	{
-	  converted_input = atoi (input);
-	  printf ("INPUT FORNITO: %d\n", converted_input);
-	  current_value = somma (converted_input);
-	  if (converted_input < 0)
+	  // converto la stringa in int
+	  input_integer = atoi (input_string);
+
+	  // eseguo la funzione rientrante somma_r
+	  actual_value = somma_r (input_integer, actual_value);
+	  printf ("Somma algebrica: %d\n", actual_value);
+
+	  // controllo se il valore fornito dall'utente e` negativo
+	  if (input_integer < 0)
 	    {
-	      printf ("Valore: %d\n", current_value);
-	      RAISE_ERROR ("Rilevato valore negativo");
+	      printf ("Rilevato input negativo, uscita dal programma.\n");
+	      break;
 	    }
-	  else
-	    printf ("Valore: %d\n", current_value);
 	}
-    }
-
-  // eliminazione dei file temporanei
-  remove ("somma_da.dat");
-
-  // liberazione della memoria dinamica allocata sullo heap
-  free (input);
+    }				// end while
 
   // end main
-  return ret_val;
+  return return_value;
 }
 
 int
-somma (int nuovo_addendo)
+somma_r (int nuovo_addendo, int accumulatore)
 {
-  int new_value;
-  FILE *storage_file = fopen ("somma_da.dat", "rb");
-  int precedente;
-  fread (&precedente, sizeof (int), 1, storage_file);
-  fclose (storage_file);
-  new_value = precedente + nuovo_addendo;
-  storage_file = fopen ("somma_da.dat", "wb");
-  fwrite (&new_value, sizeof (int), 1, storage_file);
-  fclose (storage_file);
-  return new_value;
-}
+  /* Versione rientrante della funzione 'somma' ('somma_r').
+   * +----------------------+
+   * | Rules for reentrancy |
+   * +----------------------+
+   *
+   * 1) Reentrant code may not hold any static (or global)
+   *    non-constant data;
+   * 2) Reentrant code may not modify its own code;
+   * 3) Reentrant code may not call non-reentrant computer programs
+   *    or routines.
+   */
 
-void
-preparaFileIniziale (int *init_value)
-{
-  // determino se esiste gia' un file...
-  int exists;
-  FILE *temp_file = fopen ("somma_da.dat", "rb");
-  if (temp_file == NULL)
-    exists = 0;
-  else
-    exists = 1;
-
-  // ... e nel caso...
-  if (exists)
-    {
-      printf ("Vecchio file 'somma_da.dat' gia` presente. Rimozione...\n");
-      fclose (temp_file);
-      temp_file = NULL;
-      remove ("somma_da.dat");
-    }
-  else
-    printf ("Nessun file 'somma_da.dat' gia` presente, OK.\n");
-
-  // creo il file nuovo
-  temp_file = fopen ("somma_da.dat", "wb");
-  fwrite (init_value, sizeof (int), 1, temp_file);
-  fclose (temp_file);
-  printf ("Nuovo file binario 'somma_da.dat' creato (INIT_VALUE = %d).\n",
-	  INIT_VALUE);
+  return accumulatore + nuovo_addendo;
 }
 
 int
-validate (char *input_string)
+validate_integer (char *input_string)
 {
   int temp;
   if (input_string[0] == '-')
@@ -141,7 +130,7 @@ validate (char *input_string)
       if (DEBUG_MODE)
 	printf ("Validate: numero positivo?\n");
     }
-  int result = 1;
+  int result = 1;		// 1 significa numero intero valido
   while (input_string[temp] != '\0')
     {
       if (DEBUG_MODE)
@@ -150,52 +139,10 @@ validate (char *input_string)
       if (!isdigit (input_string[temp]))
 	{
 	  // questo carattere non e' una cifra
-	  result = 0;
+	  result = 0;		// 0 significa numero intero non valido
 	  break;
 	}
       temp++;
     }				// end while
   return result;
-}
-
-int
-somma_r (int nuovo_addendo)
-{
-  // Versione rientrante della funzione 'somma' ('somma_r').
-
-  /* +----------------------+
-   * | Rules for reentrancy |
-   * +----------------------+
-   *
-   * 1) Reentrant code may not hold any static (or global)
-   *    non-constant data;
-   * 2) Reentrant code may not modify its own code;
-   * 3) Reentrant code may not call non-reentrant computer programs
-   *    or routines.
-   *
-   * NOTA: le prime due regole sono verificate (il codice di somma_r
-   * non contiene ne' agisce su variabili global o static; il codice,
-   * inoltre, non modifica se` stesso.
-   * Devo invece assicurarmi che sia rispettata la terza regola
-   * (somma_da non deve chiamare funzioni non-rientranti).
-   */
-
-  /* Considerato quanto sopra, controllo se le seguenti funzioni:
-   * - fopen();
-   * - fread();
-   * - fclose();
-   * - fwrite()
-   * siano rientranti o meno.
-   */
-  
-  int new_value;
-  FILE *storage_file = fopen ("somma_da.dat", "rb");
-  int precedente;
-  fread (&precedente, sizeof (int), 1, storage_file);
-  fclose (storage_file);
-  new_value = precedente + nuovo_addendo;
-  storage_file = fopen ("somma_da.dat", "wb");
-  fwrite (&new_value, sizeof (int), 1, storage_file);
-  fclose (storage_file);
-  return new_value;
 }
