@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "libs/my_utils.h"
-#include "libs/parse_and_validate_input.h"
+#include "libs/parsing_utils.h"
 
 int
 main (int argc, char *argv[])

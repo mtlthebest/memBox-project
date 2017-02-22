@@ -4,6 +4,18 @@
 #include "my_utils.h"
 
 void
+show_all_contents (struct input_data *data)
+{
+  printf ("--- Inizio contenuti ---\n");
+  printf ("Numero opzioni: %d\n", data->numero_opzioni);
+  printf ("Numero file: %d\n", data->numero_file);
+  printf ("Count lines: %d\n", data->count_lines);
+  printf ("Count words: %d\n", data->count_words);
+  show_file_list (data);
+  printf ("--- Fine contenuti ---\n");
+}
+
+void
 show_file_list (struct input_data *info)
 {
   if (DEBUG)
@@ -28,16 +40,20 @@ free_mem (struct input_data *to_empty)
 
   struct element *prec;
   struct element *cur = to_empty->primo;
-  do
+  if (to_empty->numero_file == 0)
     {
-      prec = cur;
-      cur = cur->next;
-      free (prec);
+      free (cur);
     }
-  while (cur != NULL);
+  else
+    do
+      {
+	prec = cur;
+	cur = cur->next;
+	free (prec);
+      }
+    while (cur != NULL);
   if (DEBUG)
     printf ("... free_mem() eseguita.\n");
-
 }
 
 void
@@ -50,15 +66,19 @@ enqueue (char *stringa, struct input_data *input)
   // porto il cursore nella posizione corretta
   struct element *cur = input->primo;
   int x;
-  for (x = 0; x < input->numero_file - 1; x++)
-    cur = cur->next;		// qui vale (cur == NULL)
-
-  // alloco la memoria necessaria
-  cur->next = malloc (sizeof (struct element));
-
-  // aggiorno i contenuti
-  strcpy (cur->next->filename, stringa);
-  cur->next->next = NULL;
+  if (input->numero_file != 0)
+    {
+      for (x = 0; x < input->numero_file - 1; x++)
+	cur = cur->next;
+      cur->next = malloc (sizeof (struct element));
+      strcpy (cur->next->filename, stringa);
+      cur->next->next = NULL;
+    }
+  else
+    {
+      strcpy (cur->filename, stringa);
+      cur->next = NULL;
+    }
   input->numero_file++;
 
   // info di debug

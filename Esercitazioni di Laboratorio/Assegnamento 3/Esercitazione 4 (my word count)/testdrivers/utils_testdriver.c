@@ -1,9 +1,11 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "../libs/my_utils.h"
+#include "../libs/parsing_utils.h"
 
 int
-main ()
+main (int argc, char *argv[])
 {
   // dichiarazione struttura base
   struct input_data foo;
@@ -39,6 +41,28 @@ main ()
 
   // libero la memoria allocata per gli elementi dentro la struttura
   free_mem (&foo);
+
+  // --- fine test my_utils.c ---
+  // --- inizio test parse_utils.c ---
+
+  int temp;
+
+  // provo check no. 1
+  temp = step_one (argc);
+  printf ("Esito step one: %d\n", temp);
+
+  // provo check no. 2
+  struct input_data bar;
+  bar.numero_file = 0;
+  bar.count_lines = 0;
+  bar.count_words = 0;
+  bar.primo = malloc (sizeof (struct element));
+  temp = step_two (argc, argv, &bar);
+  show_all_contents (&bar);
+  printf ("Esito step two: %d\n", temp);
+
+  // libero la memoria allocata per gli elementi dentro la struttura
+  free_mem (&bar);
 
   // end testdriver
   return 0;
