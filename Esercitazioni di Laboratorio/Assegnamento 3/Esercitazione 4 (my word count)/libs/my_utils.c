@@ -23,6 +23,9 @@ show_file_list (struct input_data *info)
 void
 free_mem (struct input_data *to_empty)
 {
+  if (DEBUG)
+    printf ("Eseguo free_mem()...\n");
+
   struct element *prec;
   struct element *cur = to_empty->primo;
   do
@@ -32,6 +35,9 @@ free_mem (struct input_data *to_empty)
       free (prec);
     }
   while (cur != NULL);
+  if (DEBUG)
+    printf ("... free_mem() eseguita.\n");
+
 }
 
 void

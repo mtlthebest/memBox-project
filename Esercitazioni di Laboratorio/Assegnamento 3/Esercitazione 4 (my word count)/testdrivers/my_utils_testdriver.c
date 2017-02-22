@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include "my_utils.h"
+#include "../libs/my_utils.h"
 
 int
 main ()
