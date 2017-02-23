@@ -36,6 +36,28 @@ main (int argc, char *argv[])
     }
 
   // corpo principale del programma
+  int i;
+  int l_total = 0;
+  int w_total = 0;
+  struct element *cur = queue.primo;
+  for (i = 0; i < queue.numero_file; i++)
+    {
+      if (queue.count_lines)
+	printf ("%d ", my_lc (cur->filename, &l_total));
+      if (queue.count_words)
+	printf ("%d ", my_wc (cur->filename, &w_total));
+      printf ("%s\n", cur->filename);
+      cur = cur->next;
+    }
+  if (queue.numero_file > 1)
+    {
+      // stampo anche i totali nel caso di piu` file
+      if (queue.count_lines)
+	printf ("%d ", l_total);
+      if (queue.count_words)
+	printf ("%d ", w_total);
+      printf ("totale\n");
+    }
 
   // liberazione memoria dinamica allocata sullo heap
   free_mem (&queue);

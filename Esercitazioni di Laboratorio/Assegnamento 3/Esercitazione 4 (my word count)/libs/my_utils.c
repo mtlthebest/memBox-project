@@ -1,3 +1,5 @@
+#define MAX_LENGTH 256
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,4 +85,50 @@ enqueue (char *stringa, struct input_data *input)
 
   // info di debug
   printf ("... enqueue() eseguita.\n");
+}
+
+int
+my_lc (char *f, int *totale)
+{
+  if (DEBUG)
+    printf ("Esecuzione my_lc()...\n");
+
+  // conta il numero di linee presenti in un file
+  int i;
+  int count = 0;
+  char block[MAX_LENGTH];
+  FILE *x = fopen (f, "r");
+  if (DEBUG)
+    printf ("my_lc(): aperto file %s in sola lettura.\n", f);
+  while (fgets (block, MAX_LENGTH, x) != NULL)
+    {
+      if (DEBUG)
+	printf ("my_lc(): dentro ciclo while...\n");
+      for (i = 0; i < MAX_LENGTH; i++)
+	{
+	  if (DEBUG)
+	    printf ("block[i] = %c\n", block[i]);
+	  if (block[i] == '\0')
+	    break;
+	  else if (block[i] == '\n')
+	    count++;
+	}			// end for
+    }				// end while
+
+  // chiusura del file aperto
+  fclose (x);
+  if (DEBUG)
+    printf ("my_lc(): chiuso file %s.\n", f);
+
+  // aggiornamento accumulatore
+  *totale += count;
+  if (DEBUG)
+    printf ("my_lc(): count = %d.\n", count);
+  return count;
+}
+
+int
+my_wc (char *f, int *totale)
+{
+  return 0;
 }

@@ -19,3 +19,5 @@ void show_file_list (struct input_data *);
 void show_all_contents (struct input_data *);
 void free_mem (struct input_data *);
 void enqueue (char *, struct input_data *);
+int my_lc (char *, int *);
+int my_wc (char *, int *);
