@@ -51,6 +51,10 @@ main (int argc, char *argv[])
   temp = step_one (argc);
   printf ("Esito step one: %d\n", temp);
 
+  // provo check no. 1.5
+  temp = step_one_point_five (argc, argv);
+  printf ("Esito step one_point_five: %d\n", temp);
+
   // provo check no. 2
   struct input_data bar;
   bar.numero_file = 0;
@@ -60,6 +64,18 @@ main (int argc, char *argv[])
   temp = step_two (argc, argv, &bar);
   show_all_contents (&bar);
   printf ("Esito step two: %d\n", temp);
+
+  // provo check no. 3
+  temp = step_three (argc, &bar);
+  printf ("Esito step three: %d\n", temp);
+
+  // provo check no. 4
+  temp = step_four (argc, argv, &bar);
+  printf ("Esito step four: %d\n", temp);
+
+  // provo check no. 5
+  temp = step_five (&bar);
+  printf ("Esito step five: %d\n", temp);
 
   // libero la memoria allocata per gli elementi dentro la struttura
   free_mem (&bar);
