@@ -10,7 +10,7 @@ utils_testdriver.o: testdrivers/utils_testdriver.c libs/my_utils.h
 	gcc -c -g -pedantic -Wall -DDEBUG=1 testdrivers/utils_testdriver.c
 	mv -f utils_testdriver.o testdrivers/
 
-refactored_my_word_count.o: refactored_my_word_count.c libs/parsing_utils.h libs/my_utils.h
+refactored_my_word_count.o: refactored_my_word_count.c refactored_my_word_count.h libs/parsing_utils.h libs/my_utils.h
 	gcc -c -g -pedantic -Wall -DDEBUG=1 refactored_my_word_count.c
 
 clean:
@@ -29,6 +29,7 @@ indent:
 	indent libs/parsing_utils.h
 	indent testdrivers/utils_testdriver.c
 	indent refactored_my_word_count.c
+	indent refactored_my_word_count.h
 
 utils_testdriver: indent utils_testdriver.o my_utils.o parsing_utils.o clean
 	gcc libs/my_utils.o libs/parsing_utils.o testdrivers/utils_testdriver.o -o testdrivers/utils_testdriver.run
