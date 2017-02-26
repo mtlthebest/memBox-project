@@ -1,6 +1,8 @@
 CC = g++
 CFLAGS = -O3 -Wall -pedantic
 
+.PHONY: clean_all clean indent
+
 main: main.o clean
 	$(CC) $< -o $@.run
 
@@ -18,5 +20,3 @@ clean:
 
 indent:
 	indent main.c
-
-.PHONY: clean_all clean indent
