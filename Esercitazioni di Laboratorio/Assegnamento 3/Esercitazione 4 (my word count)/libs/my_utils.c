@@ -84,7 +84,8 @@ enqueue (char *stringa, struct input_data *input)
   input->numero_file++;
 
   // info di debug
-  printf ("... enqueue() eseguita.\n");
+  if (DEBUG)
+    printf ("... enqueue() eseguita.\n");
 }
 
 int
@@ -130,5 +131,60 @@ my_lc (char *f, int *totale)
 int
 my_wc (char *f, int *totale)
 {
-  return 0;
+  if (DEBUG)
+    printf ("Esecuzione my_wc()...\n");
+
+  // conta il numero di parole presenti in un file
+  int count = 0;
+  int i;
+  char block[MAX_LENGTH];
+  FILE *x = fopen (f, "r");
+  while (fgets (block, MAX_LENGTH, x) != NULL)
+    {
+      // sostituisco tutte le occorrenze di '\t' e '\n' con ' '
+      for (i = 0; i < MAX_LENGTH; i++)
+	{
+	  if (block[i] == '\0')
+	    break;		// fine stringa
+	  else if ((block[i] == '\t') || (block[i] == '\n'))
+	    block[i] = ' ';
+	}			// end for
+
+      // eseguo strtok la prima volta
+      if (DEBUG)
+	printf ("my_wc: block = '%s'\n", block);
+      if (strtok (block, " ") != NULL)
+	{
+	  count++;
+	  // ciclo fino a quando non restituisce NULL;
+	  while (strtok (NULL, " ") != NULL)
+	    count++;
+	}			// end if
+      else
+	continue;
+    }				// end fgets while
+
+  // chiusura del file aperto
+  fclose (x);
+
+  // aggiornamento accumulatore
+  *totale += count;
+  return count;
+}
+
+int
+calcola_cifre (int valore)
+{
+  if (valore == 0)
+    return 1;
+  else
+    {
+      int temp = 0;
+      while (valore > 0)
+	{
+	  valore /= 10;
+	  temp++;
+	}
+      return temp;
+    }
 }

@@ -40,24 +40,91 @@ main (int argc, char *argv[])
   int l_total = 0;
   int w_total = 0;
   struct element *cur = queue.primo;
+
+  // calcolo l'ampiezza massima della mantissa
+  int mantissa = 0;
+  int foo = 0;
   for (i = 0; i < queue.numero_file; i++)
     {
       if (queue.count_lines)
-	printf ("%d ", my_lc (cur->filename, &l_total));
+	{
+	  foo = calcola_cifre (my_lc (cur->filename, &l_total));
+	  if (mantissa < foo)
+	    mantissa = foo;
+	}
       if (queue.count_words)
-	printf ("%d ", my_wc (cur->filename, &w_total));
-      printf ("%s\n", cur->filename);
+	{
+	  foo = calcola_cifre (my_wc (cur->filename, &w_total));
+	  if (mantissa < foo)
+	    mantissa = foo;
+	}
       cur = cur->next;
     }
   if (queue.numero_file > 1)
     {
       // stampo anche i totali nel caso di piu` file
       if (queue.count_lines)
-	printf ("%d ", l_total);
+	{
+	  foo = calcola_cifre (l_total);
+	  if (mantissa < foo)
+	    mantissa = foo;
+	}
       if (queue.count_words)
-	printf ("%d ", w_total);
-      printf ("totale\n");
+	{
+	  foo = calcola_cifre (w_total);
+	  if (mantissa < foo)
+	    mantissa = foo;
+	}
+      if (DEBUG)
+	printf ("Mantissa: %d\n", mantissa);
     }
+
+  // per analogia con UNIX wc
+  mantissa += 1;
+
+  // stampa a video
+  // reimposto cursore e accumulatori
+  cur = queue.primo;
+  l_total = 0;
+  w_total = 0;
+  int j;
+  for (i = 0; i < queue.numero_file; i++)
+    {
+      if (queue.count_lines)
+	{
+	  foo = my_lc (cur->filename, &l_total);
+	  for (j = 0; j < mantissa - calcola_cifre (foo); j++)
+	    printf (" ");
+	  printf ("%d ", foo);
+	}			// end first if
+      if (queue.count_words)
+	{
+	  foo = my_wc (cur->filename, &w_total);
+	  for (j = 0; j < mantissa - calcola_cifre (foo); j++)
+	    printf (" ");
+	  printf ("%d ", foo);
+	}			// end second if
+      printf ("%s\n", cur->filename);
+      cur = cur->next;
+    }				// end for
+
+  if (queue.numero_file > 1)
+    {
+      // stampo anche i totali nel caso di piu` file
+      if (queue.count_lines)
+	{
+	  for (j = 0; j < mantissa - calcola_cifre (l_total); j++)
+	    printf (" ");
+	  printf ("%d ", l_total);
+	}
+      if (queue.count_words)
+	{
+	  for (j = 0; j < mantissa - calcola_cifre (w_total); j++)
+	    printf (" ");
+	  printf ("%d ", w_total);
+	}
+      printf ("totale\n");
+    }				// end if
 
   // liberazione memoria dinamica allocata sullo heap
   free_mem (&queue);

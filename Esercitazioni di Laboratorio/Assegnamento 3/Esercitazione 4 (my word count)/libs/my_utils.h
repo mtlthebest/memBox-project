@@ -21,3 +21,4 @@ void free_mem (struct input_data *);
 void enqueue (char *, struct input_data *);
 int my_lc (char *, int *);
 int my_wc (char *, int *);
+int calcola_cifre (int);

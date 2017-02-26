@@ -1,17 +1,17 @@
 my_utils.o: libs/my_utils.c libs/my_utils.h
-	gcc -c -g -pedantic -Wall -DDEBUG=1 libs/my_utils.c
+	gcc -c -g -pedantic -Wall -DDEBUG=0 libs/my_utils.c
 	mv -f my_utils.o libs/
 
 parsing_utils.o: libs/parsing_utils.c libs/parsing_utils.h libs/my_utils.h
-	gcc -c -g -pedantic -Wall -DDEBUG=1 libs/parsing_utils.c
+	gcc -c -g -pedantic -Wall -DDEBUG=0 libs/parsing_utils.c
 	mv -f parsing_utils.o libs/
 
 utils_testdriver.o: testdrivers/utils_testdriver.c libs/my_utils.h
-	gcc -c -g -pedantic -Wall -DDEBUG=1 testdrivers/utils_testdriver.c
+	gcc -c -g -pedantic -Wall -DDEBUG=0 testdrivers/utils_testdriver.c
 	mv -f utils_testdriver.o testdrivers/
 
 refactored_my_word_count.o: refactored_my_word_count.c refactored_my_word_count.h libs/parsing_utils.h libs/my_utils.h
-	gcc -c -g -pedantic -Wall -DDEBUG=1 refactored_my_word_count.c
+	gcc -c -g -pedantic -Wall -DDEBUG=0 refactored_my_word_count.c
 
 clean:
 	find . -name "*~" -type f -delete

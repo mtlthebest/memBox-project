@@ -77,6 +77,26 @@ main (int argc, char *argv[])
   temp = step_five (&bar);
   printf ("Esito step five: %d\n", temp);
 
+  // controllo il funzionamento di calcola_cifre
+  temp = 0;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 1;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 4;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 9;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 11;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 10;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 999;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 1004;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+  temp = 1000;
+  printf ("Cifre di '%d': %d\n", temp, calcola_cifre (temp));
+
   // libero la memoria allocata per gli elementi dentro la struttura
   free_mem (&bar);
 
