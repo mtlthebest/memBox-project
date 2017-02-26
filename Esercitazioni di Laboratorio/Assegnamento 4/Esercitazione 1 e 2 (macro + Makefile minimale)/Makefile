@@ -3,6 +3,9 @@ CFLAGS = -O3 -Wall -pedantic
 
 .PHONY: clean_all clean indent
 
+testdrive: main
+	valgrind -v --leak-check=full ./main.run
+
 main: main.o clean
 	$(CC) $< -o $@.run
 
